@@ -4,12 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
-import { useRouter } from 'expo-router'; // Import useRouter
-import Constants from 'expo-constants'; // Import Constants
+import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
 
 const Card = ({ icon, title, children, onPress }: { icon: React.ReactNode, title: string, children: React.ReactNode, onPress?: () => void }) => (
-  <BlurView intensity={80} tint="light" className="rounded-2xl overflow-hidden mb-6">
-    <TouchableOpacity className="p-6" onPress={onPress}> {/* Add onPress prop */}
+  <BlurView intensity={80} tint="light" className="rounded-2xl overflow-hidden mb-6 shadow-lg"> {/* Added shadow */}
+    <TouchableOpacity className="p-6" onPress={onPress}>
       <View className="flex-row items-center mb-4">
         {icon}
         <Text className="text-xl font-bold text-gray-800 ml-3">{title}</Text>
@@ -20,8 +20,8 @@ const Card = ({ icon, title, children, onPress }: { icon: React.ReactNode, title
 );
 
 export default function HomeScreen() {
-  const router = useRouter(); // Initialize useRouter
-  const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL; // Get API_BASE_URL
+  const router = useRouter();
+  const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL;
 
   async function checkDbConnection() {
     if (!API_BASE_URL) {
@@ -52,41 +52,41 @@ export default function HomeScreen() {
               <Text className="text-4xl font-extrabold text-white shadow-sm">Welcome!</Text>
               <Text className="text-lg text-white/80">Your personal LifeLog</Text>
             </View>
-            <View className="w-16 h-16 bg-white/30 rounded-full" />
+            <View className="w-16 h-16 bg-white/30 rounded-full" /> {/* Placeholder for avatar/image */}
           </View>
 
           <Card icon={<Ionicons name="cloud-done-outline" size={24} color="#333" />} title="API Connection Test">
             <Text className="text-gray-700 mb-4">Press the button to test the connection to the API server.</Text>
             <TouchableOpacity
-              className="bg-white/50 py-3 rounded-lg"
+              className="bg-blue-500 py-3 rounded-lg shadow-md mt-2" // Enhanced button style
               onPress={checkDbConnection}
             >
-              <Text className="text-gray-800 text-center font-bold">Test Connection</Text>
+              <Text className="text-white text-center font-bold">Test Connection</Text>
             </TouchableOpacity>
           </Card>
 
           <Card
             icon={<MaterialIcons name="book" size={24} color="#333" />}
             title="今日のメモ"
-            onPress={() => router.push('/diary')} // Navigate to diary tab
+            onPress={() => router.push('/diary')}
           >
-            <Text className="text-gray-700">まだメモはありません</Text>
+            <Text className="text-gray-600 text-base">まだメモはありません</Text> {/* Refined text style */}
           </Card>
 
           <Card
             icon={<MaterialIcons name="photo-album" size={24} color="#333" />}
             title="今日の写真"
-            onPress={() => router.push('/photos')} // Navigate to photos tab
+            onPress={() => router.push('/photos')}
           >
-            <Text className="text-gray-700">まだ写真はありません</Text>
+            <Text className="text-gray-600 text-base">まだ写真はありません</Text> {/* Refined text style */}
           </Card>
 
           <Card
             icon={<MaterialIcons name="article" size={24} color="#333" />}
             title="最近の記事"
-            onPress={() => router.push('/articles')} // Navigate to articles tab
+            onPress={() => router.push('/articles')}
           >
-            <Text className="text-gray-700">まだ記事はありません</Text>
+            <Text className="text-gray-600 text-base">まだ記事はありません</Text> {/* Refined text style */}
           </Card>
         </ScrollView>
       </SafeAreaView>

@@ -97,9 +97,11 @@ export default function SignupScreen({ navigation }: any) {
 
               <View className="flex-row justify-center mt-8">
                 <Text className="text-white/80">Already have an account? </Text>
-                <TouchableOpacity onPress={() => router.push('/(auth)/login')}> {/* Use router.push for consistency */}
-                  <Text className="text-white font-bold">Login</Text>
-                </TouchableOpacity>
+                <Text>
+                  <TouchableOpacity onPress={() => router.push('/(auth)/login')}> {/* Use router.push for consistency */}
+                    <Text className="text-white font-bold">Login</Text>
+                  </TouchableOpacity>
+                </Text>
               </View>
             </View>
           </View>

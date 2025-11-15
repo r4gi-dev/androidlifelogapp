@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '@/hooks/useAuth'; // Import useAuth
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import Constants from 'expo-constants';
-import { useAuth } from '@/hooks/useAuth'; // Import useAuth
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
@@ -96,10 +96,12 @@ export default function LoginScreen({ navigation }: any) {
               </BlurView>
 
               <View className="flex-row justify-center mt-8">
-                <Text className="text-white/80">Don't have an account? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('signup')}> {/* Changed to 'signup' route name */}
-                  <Text className="text-white font-bold">Sign up</Text>
-                </TouchableOpacity>
+                <Text className="text-white/80">Don&apos;t have an account?</Text>
+                <Text>
+                  <TouchableOpacity onPress={() => navigation.navigate('signup')}>
+                    <Text className="text-white font-bold">Sign up</Text>
+                  </TouchableOpacity>
+                </Text>
               </View>
             </View>
           </View>

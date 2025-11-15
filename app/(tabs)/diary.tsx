@@ -1,17 +1,29 @@
 import React, { useState } from "react";
 import { View, Text, Button, FlatList, TextInput } from "react-native";
 import { Calendar } from "react-native-calendars";
+import Constants from 'expo-constants'; // Import Constants
+import { useAuth } from '@/hooks/useAuth'; // Import useAuth
 
 export default function DiaryScreen() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [selected, setSelected] = useState("");
   const [newTask, setNewTask] = useState("");
+  const { user } = useAuth(); // Get user from context
+
+  const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL; // Get API_BASE_URL
 
   async function fetchTasks(date: string) {
-    // TODO: Replace hardcoded user_id with the actual logged-in user's ID
-    const user_id = 1;
+    if (!API_BASE_URL) {
+      console.error('API Base URL is not configured.');
+      return;
+    }
+    if (!user?.id) { // Check if user and user.id exist
+      console.error('User not authenticated or user ID not available.');
+      return;
+    }
+    const user_id = user.id; // Use user ID from context
     try {
-      const response = await fetch(`http://192.168.3.100:3001/tasks?date=${date}&userId=${user_id}`);
+      const response = await fetch(`${API_BASE_URL}/tasks?date=${date}&userId=${user_id}`);
       const data = await response.json();
       if (response.ok) {
         setTasks(data);
@@ -24,12 +36,19 @@ export default function DiaryScreen() {
   }
 
   async function addTask() {
-    // TODO: Replace hardcoded user_id with the actual logged-in user's ID
-    const user_id = 1;
+    if (!API_BASE_URL) {
+      console.error('API Base URL is not configured.');
+      return;
+    }
+    if (!user?.id) { // Check if user and user.id exist
+      console.error('User not authenticated or user ID not available.');
+      return;
+    }
+    const user_id = user.id; // Use user ID from context
     if (!selected) return;
 
     try {
-      const response = await fetch('http://192.168.3.100:3001/tasks', {
+      const response = await fetch(`${API_BASE_URL}/tasks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

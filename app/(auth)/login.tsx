@@ -4,15 +4,24 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import Constants from 'expo-constants';
+import { useAuth } from '@/hooks/useAuth'; // Import useAuth
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { login } = useAuth(); // Use the login function from context
+
+  const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL;
 
   const handleLogin = async () => {
+    if (!API_BASE_URL) {
+      setError('API Base URL is not configured.');
+      return;
+    }
     try {
-      const response = await fetch('http://192.168.3.100:3001/login', {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -21,7 +30,9 @@ export default function LoginScreen({ navigation }: any) {
       });
       const data = await response.json();
       if (response.ok) {
-        navigation.replace('Home');
+        // Assuming the backend returns user data on successful login
+        // For now, using placeholder user data
+        login({ id: 'some-user-id', email }); // Call login from context
       } else {
         setError(data.message || 'Invalid email or password.');
       }
@@ -33,6 +44,7 @@ export default function LoginScreen({ navigation }: any) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1" // Ensure KeyboardAvoidingView covers full screen
     >
       <LinearGradient
         colors={['#a2d2ff', '#ffc8dd']}
@@ -51,7 +63,7 @@ export default function LoginScreen({ navigation }: any) {
                 <View className="flex-row items-center border-b border-white/50 mb-4">
                   <Ionicons name="mail-outline" size={22} color="white" />
                   <TextInput
-                    className="flex-1 ml-3 text-base text-white"
+                    className="flex-1 ml-3 text-base text-white placeholder:text-white/70" // Refined placeholder color
                     placeholder="Email Address"
                     placeholderTextColor="#eee"
                     value={email}
@@ -64,7 +76,7 @@ export default function LoginScreen({ navigation }: any) {
                 <View className="flex-row items-center border-b border-white/50 mb-6">
                   <MaterialCommunityIcons name="lock-outline" size={22} color="white" />
                   <TextInput
-                    className="flex-1 ml-3 text-base text-white"
+                    className="flex-1 ml-3 text-base text-white placeholder:text-white/70" // Refined placeholder color
                     placeholder="Password"
                     placeholderTextColor="#eee"
                     value={password}
@@ -73,7 +85,7 @@ export default function LoginScreen({ navigation }: any) {
                   />
                 </View>
 
-                {error ? <Text className="text-white/80 bg-red-500/50 rounded p-2 text-center mb-4">{error}</Text> : null}
+                {error ? <Text className="text-red-300 bg-red-700/50 rounded p-2 text-center mb-4 font-semibold">{error}</Text> : null} {/* Enhanced error message style */}
 
                 <TouchableOpacity
                   className="bg-white/90 py-4 rounded-2xl shadow-md"
@@ -85,7 +97,7 @@ export default function LoginScreen({ navigation }: any) {
 
               <View className="flex-row justify-center mt-8">
                 <Text className="text-white/80">Don't have an account? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                <TouchableOpacity onPress={() => navigation.navigate('signup')}> {/* Changed to 'signup' route name */}
                   <Text className="text-white font-bold">Sign up</Text>
                 </TouchableOpacity>
               </View>

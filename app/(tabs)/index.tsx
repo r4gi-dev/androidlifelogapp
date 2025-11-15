@@ -1,98 +1,95 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router'; // Import useRouter
+import Constants from 'expo-constants'; // Import Constants
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const Card = ({ icon, title, children, onPress }: { icon: React.ReactNode, title: string, children: React.ReactNode, onPress?: () => void }) => (
+  <BlurView intensity={80} tint="light" className="rounded-2xl overflow-hidden mb-6">
+    <TouchableOpacity className="p-6" onPress={onPress}> {/* Add onPress prop */}
+      <View className="flex-row items-center mb-4">
+        {icon}
+        <Text className="text-xl font-bold text-gray-800 ml-3">{title}</Text>
+      </View>
+      <View>{children}</View>
+    </TouchableOpacity>
+  </BlurView>
+);
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const router = useRouter(); // Initialize useRouter
+  const API_BASE_URL = Constants.expoConfig?.extra?.API_BASE_URL; // Get API_BASE_URL
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  async function checkDbConnection() {
+    if (!API_BASE_URL) {
+      alert('API Base URL is not configured.');
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/test`);
+      const data = await response.json();
+      console.log('DB Response:', data);
+      alert('DB Connection Test Successful! Check console for details.');
+    } catch (err) {
+      console.error('Failed to connect to API:', err);
+      alert('DB Connection Test Failed! Check console for details.');
+    }
+  }
+
+  return (
+    <LinearGradient
+      colors={['#a2d2ff', '#ffc8dd']}
+      className="flex-1"
+    >
+      <SafeAreaView className="flex-1">
+        <StatusBar barStyle="dark-content" />
+        <ScrollView className="p-6">
+          <View className="flex-row justify-between items-center mb-8">
+            <View>
+              <Text className="text-4xl font-extrabold text-white shadow-sm">Welcome!</Text>
+              <Text className="text-lg text-white/80">Your personal LifeLog</Text>
+            </View>
+            <View className="w-16 h-16 bg-white/30 rounded-full" />
+          </View>
+
+          <Card icon={<Ionicons name="cloud-done-outline" size={24} color="#333" />} title="API Connection Test">
+            <Text className="text-gray-700 mb-4">Press the button to test the connection to the API server.</Text>
+            <TouchableOpacity
+              className="bg-white/50 py-3 rounded-lg"
+              onPress={checkDbConnection}
+            >
+              <Text className="text-gray-800 text-center font-bold">Test Connection</Text>
+            </TouchableOpacity>
+          </Card>
+
+          <Card
+            icon={<MaterialIcons name="book" size={24} color="#333" />}
+            title="今日のメモ"
+            onPress={() => router.push('/diary')} // Navigate to diary tab
+          >
+            <Text className="text-gray-700">まだメモはありません</Text>
+          </Card>
+
+          <Card
+            icon={<MaterialIcons name="photo-album" size={24} color="#333" />}
+            title="今日の写真"
+            onPress={() => router.push('/photos')} // Navigate to photos tab
+          >
+            <Text className="text-gray-700">まだ写真はありません</Text>
+          </Card>
+
+          <Card
+            icon={<MaterialIcons name="article" size={24} color="#333" />}
+            title="最近の記事"
+            onPress={() => router.push('/articles')} // Navigate to articles tab
+          >
+            <Text className="text-gray-700">まだ記事はありません</Text>
+          </Card>
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
